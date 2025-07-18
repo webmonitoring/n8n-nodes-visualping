@@ -37,7 +37,8 @@
       "dist/credentials/VisualpingApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/Visualping/Visualping.node.js"
+      "dist/nodes/Visualping/Visualping.node.js",
+      "dist/nodes/VisualpingTrigger/VisualpingTrigger.node.js"
     ]
   },
   "devDependencies": {
