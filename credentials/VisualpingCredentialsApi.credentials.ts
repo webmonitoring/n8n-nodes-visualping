@@ -5,9 +5,10 @@ import {
 	INodeProperties,
 } from 'n8n-workflow';
 
-export class ExampleCredentialsApi implements ICredentialType {
-	name = 'exampleCredentialsApi';
-	displayName = 'Example Credentials API';
+export class VisualpingCredentialsApi implements ICredentialType {
+	name = 'visualpingCredentialsApi';
+	displayName = 'Visualping Credentials API';
+	icon = 'file:visualping.svg' as const;
 
 	documentationUrl = 'https://your-docs-url';
 
