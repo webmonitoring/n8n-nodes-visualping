@@ -1,19 +1,20 @@
 {
-  "name": "n8n-nodes-<...>",
+  "name": "n8n-nodes-visualping",
   "version": "0.1.0",
-  "description": "",
+  "description": "This is an n8n community node. It lets you use Visualping in your n8n workflows.",
   "keywords": [
-    "n8n-community-node-package"
+    "n8n-community-node-package",
+    "visualping"
   ],
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://visualping.io/",
   "author": {
     "name": "",
     "email": ""
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/<...>/n8n-nodes-<...>.git"
+    "url": "https://github.com/webmonitoring/n8n-nodes-visualping"
   },
   "engines": {
     "node": ">=20.15"
@@ -33,12 +34,10 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/ExampleCredentialsApi.credentials.js",
-      "dist/credentials/HttpBinApi.credentials.js"
+      "dist/credentials/VisualpingApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/ExampleNode/ExampleNode.node.js",
-      "dist/nodes/HttpBin/HttpBin.node.js"
+      "dist/nodes/Visualping/Visualping.node.js"
     ]
   },
   "devDependencies": {
