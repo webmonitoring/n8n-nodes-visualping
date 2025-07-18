@@ -59,6 +59,14 @@ export class VisualpingTrigger implements INodeType {
 		],
 		properties: [
 			{
+				displayName: 'Workspace ID',
+				name: 'workspaceId',
+				type: 'string',
+				default: '',
+				description: 'The Visualping Workspace ID where the job is running',
+				required: true,
+			},
+			{
 				displayName: 'Job ID',
 				name: 'jobId',
 				type: 'string',
@@ -82,8 +90,6 @@ export class VisualpingTrigger implements INodeType {
 			async checkExists(this: IHookFunctions): Promise<boolean> {
 				const webhookData = this.getWorkflowStaticData('node');
 
-				// @ts-ignore
-				console.log(webhookData);
 
 				if (webhookData.webhookId === undefined) {
 					return false;
@@ -101,13 +107,13 @@ export class VisualpingTrigger implements INodeType {
 			},
 			async create(this: IHookFunctions): Promise<boolean> {
 				const webhookUrl = this.getNodeWebhookUrl('default') as string;
+				const workspaceId = this.getNodeParameter('jobId') as number;
 				const jobId = this.getNodeParameter('jobId') as number;
 
 				const { prodUrl, testUrl } = getWebhookUrls(webhookUrl);
 
 				await testWebhookUrl.call(this, testUrl, jobId);
-
-				await updateJobWebhookUrl.call(this, prodUrl);
+				await updateJobWebhookUrl.call(this, prodUrl, jobId, workspaceId);
 
 				return true;
 			},

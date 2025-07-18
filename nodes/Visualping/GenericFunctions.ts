@@ -45,5 +45,6 @@ export async function testWebhookUrl(this: IHookFunctions, webhookUrl: string, j
 	return response;
 }
 
-export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: string) {
+export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: string, jobId: number, workspaceId: number) {
+
 }
