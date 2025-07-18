@@ -4,6 +4,13 @@ import {
 	INodeProperties,
 } from 'n8n-workflow';
 
+export const authApiUrl = 'https://api.visualping.io/v2/token';
+
+export type VisualpingCredentials = {
+	email: string;
+	password: string;
+};
+
 export class VisualpingCredentialsApi implements ICredentialType {
 	name = 'visualpingCredentialsApi';
 	displayName = 'Visualping Credentials';
@@ -32,8 +39,7 @@ export class VisualpingCredentialsApi implements ICredentialType {
 
 	test: ICredentialTestRequest = {
 		request: {
-			baseURL: 'https://api.visualping.io',
-			url: '/v2/token',
+			baseURL: authApiUrl,
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
