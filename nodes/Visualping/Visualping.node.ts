@@ -5,6 +5,7 @@ import type {
 	INodeTypeDescription,
 } from 'n8n-workflow';
 import { NodeConnectionType, NodeOperationError } from 'n8n-workflow';
+// import { requestIdToken } from './GenericFunctions';
 
 export class Visualping implements INodeType {
 	description: INodeTypeDescription = {
@@ -20,17 +21,23 @@ export class Visualping implements INodeType {
 		inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main],
 		usableAsTool: true,
+		credentials: [
+			{
+				name: 'visualpingCredentialsApi',
+				required: true,
+			},
+		],
 		properties: [
 			// Node properties which the user gets displayed and
 			// can change on the node.
-			{
-				displayName: 'My String',
-				name: 'myString',
-				type: 'string',
-				default: '',
-				placeholder: 'Placeholder value',
-				description: 'The description text',
-			},
+			// {
+			// 	displayName: 'My String',
+			// 	name: 'myString',
+			// 	type: 'string',
+			// 	default: '',
+			// 	placeholder: 'Placeholder value',
+			// 	description: 'The description text',
+			// },
 		],
 	};
 
@@ -40,6 +47,8 @@ export class Visualping implements INodeType {
 	// You can make async calls and use `await`.
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
+
+		// const id_token = await requestIdToken.call(this);
 
 		let item: INodeExecutionData;
 		let myString: string;
