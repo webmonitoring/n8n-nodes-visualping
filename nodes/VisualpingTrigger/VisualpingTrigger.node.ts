@@ -5,7 +5,7 @@ import type {
 	IHookFunctions,
 } from 'n8n-workflow';
 import {  NodeConnectionType } from 'n8n-workflow';
-import { testWebhookUrl } from '../Visualping/GenericFunctions';
+import { testWebhookUrl, updateJobWebhookUrl } from '../Visualping/GenericFunctions';
 
 /**
  * Extract production and test URLs from a webhook URL
@@ -107,7 +107,7 @@ export class VisualpingTrigger implements INodeType {
 
 				await testWebhookUrl.call(this, testUrl, jobId);
 
-				await updateJobWebhookUrl(this, prodUrl);
+				await updateJobWebhookUrl.call(this, prodUrl);
 
 				return true;
 			},
