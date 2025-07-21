@@ -11,7 +11,7 @@ export class Visualping implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Visualping',
 		name: 'visualping',
-		icon: 'file:visualping.svg',
+		icon: 'file:icons/visualping.svg',
 		group: ['transform'],
 		version: 1,
 		description: 'Consume Visualping API',

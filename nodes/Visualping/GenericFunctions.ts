@@ -1,7 +1,7 @@
-import { IExecuteFunctions, NodeOperationError } from 'n8n-workflow';
+import { IExecuteFunctions, NodeOperationError, IHookFunctions, ILoadOptionsFunctions, INodePropertyOptions } from 'n8n-workflow';
 import { authApiUrl, VisualpingCredentials } from '../../credentials/VisualpingCredentialsApi.credentials';
 
-export async function requestIdToken(this: IExecuteFunctions) {
+export async function requestIdToken(this: IExecuteFunctions | IHookFunctions | ILoadOptionsFunctions) {
 	const credentials = (await this.getCredentials(
 		'visualpingCredentialsApi',
 	)) as VisualpingCredentials;
@@ -25,3 +25,126 @@ export async function requestIdToken(this: IExecuteFunctions) {
 		throw new NodeOperationError(this.getNode(), 'Authentication failed: ' + error.message);
 	}
 }
+
+export async function testWebhookUrl(this: IHookFunctions, webhookUrl: string, jobId: number) {
+	const id_token = await requestIdToken.call(this);
+
+	const response = await this.helpers.request({
+		method: 'POST',
+		url: "https://job.api.visualping.io/v2/jobs/notification/push",
+		body: {
+			jobId: Number(jobId),
+			notificationType: "webhook",
+			url: webhookUrl,
+		},
+		headers: {
+			'Authorization': id_token
+		},
+	});
+
+	return response;
+}
+
+export async function getWorkspaces(
+	this: ILoadOptionsFunctions,
+  ): Promise<INodePropertyOptions[]> {
+	const returnData: INodePropertyOptions[] = [];
+
+	const id_token = await requestIdToken.call(this);
+
+	const { workspaces } = await this.helpers.request({
+		method: 'GET',
+		url: `https://account.api.visualping.io/describe-user`,
+		headers: {
+			'Authorization': id_token
+		},
+		json: true,
+	});
+
+
+	for (const workspace of workspaces) {
+	  if (workspace.name === undefined || workspace.id === undefined) {
+		continue;
+	  }
+
+	  returnData.push({
+		name: workspace.name,
+		value: workspace.id,
+	  });
+	}
+
+	return returnData;
+  }
+
+export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: string, jobId: number, workspaceId: number) {
+	const id_token = await requestIdToken.call(this);
+
+	const response = await this.helpers.request({
+		method: 'PUT',
+		url: `https://job.api.visualping.io/v2/jobs/${jobId}`,
+		body: {
+			workspaceId: 37813,
+			"notification": {
+				"config": {
+					"webhook": {
+						"url": webhookUrl,
+						"active": true,
+						"notificationType": "webhook"
+					}
+				}
+			}
+		},
+		headers: {
+			'Authorization': id_token
+		},
+	});
+
+	return response;
+}
+
+
+
+export async function getJobData(this: IHookFunctions, jobId: number, workspaceId: number) {
+	const id_token = await requestIdToken.call(this);
+
+	const response = await this.helpers.request({
+		method: 'GET',
+		url: `https://job.api.visualping.io/v2/jobs/${jobId}?jobId=${jobId}&workspaceId=${workspaceId}`,
+		headers: {
+			'Authorization': id_token
+		},
+		json: true,
+	});
+
+	const webhookJobUrl = response?.notification?.config?.webhook?.url;
+
+	return { webhookJobUrl, ...response };
+}
+
+export function getWebhookUrls(webhookUrl: string): { prodUrl: string; testUrl: string } {
+	// Parse the URL to extract components
+	const urlParts = webhookUrl.split('/');
+	
+	// Find the workflow ID (it's the UUID after /webhook/ or /webhook-test/)
+	const workflowIdIndex = urlParts.findIndex((part: string) => 
+		part === 'webhook' || part === 'webhook-test'
+	);
+	
+	if (workflowIdIndex === -1 || workflowIdIndex + 1 >= urlParts.length) {
+		throw new Error('Invalid webhook URL format');
+	}
+	
+	const workflowId = urlParts[workflowIdIndex + 1];
+	const remainingPath = urlParts.slice(workflowIdIndex + 2).join('/');
+	
+	// Get the base URL (protocol + host)
+	const baseUrl = urlParts.slice(0, workflowIdIndex).join('/');
+	
+	// Construct the URLs
+	const prodUrl = `${baseUrl}/webhook/${workflowId}/${remainingPath}`;
+	const testUrl = `${baseUrl}/webhook-test/${workflowId}/${remainingPath}`;
+	
+	return { prodUrl, testUrl };
+}
+
+
