@@ -5,13 +5,13 @@ import type {
 	IHookFunctions,
 } from 'n8n-workflow';
 import {  NodeConnectionType } from 'n8n-workflow';
-import { getJobData, getWebhookUrls, getWorkspaces, testWebhookUrl, updateJobWebhookUrl } from '../Visualping/GenericFunctions';
+import { getJobData, getWebhookUrls, getWorkspaces, testWebhookUrl, updateJobWebhookUrl } from './GenericFunctions';
 
 export class VisualpingTrigger implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Visualping Trigger',
 		name: 'visualpingTrigger',
-		icon: 'file:visualping.svg',
+		icon: 'file:icons/visualping.svg',
 		group: ['trigger'],
 		version: 1,
 		description: 'Starts the workflow when Visualping calls the webhook',
@@ -61,7 +61,7 @@ export class VisualpingTrigger implements INodeType {
 		loadOptions: {
 		  getWorkspaces,
 		},
-	  };
+	};
 	
 	webhookMethods = {
 		default: {

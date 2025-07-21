@@ -38,7 +38,7 @@
     ],
     "nodes": [
       "dist/nodes/Visualping/Visualping.node.js",
-      "dist/nodes/VisualpingTrigger/VisualpingTrigger.node.js"
+      "dist/nodes/Visualping/VisualpingTrigger.node.js"
     ]
   },
   "devDependencies": {
