@@ -66,22 +66,20 @@ export class VisualpingTrigger implements INodeType {
 	webhookMethods = {
 		default: {
 			async checkExists(this: IHookFunctions): Promise<boolean> {
-				const webhookData = this.getWorkflowStaticData('node');
+				const webhookUrl = this.getNodeWebhookUrl('default') as string;
+				const workspaceId = this.getNodeParameter('workspaceId') as number;
+				const jobId = this.getNodeParameter('jobId') as number;
 
-
-				if (webhookData.webhookId === undefined) {
-					return false;
-				}
 				try {
+					const { prodUrl } = getWebhookUrls(webhookUrl);
+					const { webhookJobUrl } = await getJobData.call(this, jobId, workspaceId);
+					return webhookJobUrl === prodUrl;
 				} catch (error) {
-					if (error.response.status === 404) {
-						delete webhookData.webhookId;
-						delete webhookData.webhookEvents;
+					if (error.response && error.response.status === 404) {
 						return false;
 					}
 					throw error;
 				}
-				return true;
 			},
 			async create(this: IHookFunctions): Promise<boolean> {
 				const webhookUrl = this.getNodeWebhookUrl('default') as string;
@@ -89,19 +87,17 @@ export class VisualpingTrigger implements INodeType {
 				const jobId = this.getNodeParameter('jobId') as number;
 
 				const { prodUrl, testUrl } = getWebhookUrls(webhookUrl);
-				const { webhookJobUrl } = await getJobData.call(this, jobId, workspaceId);
 
 				await testWebhookUrl.call(this, testUrl, jobId);
-
-				if(webhookJobUrl !== prodUrl) {
-					await updateJobWebhookUrl.call(this, prodUrl, jobId, workspaceId);
-				}
+				await updateJobWebhookUrl.call(this, prodUrl, jobId, workspaceId);
 
 				return true;
 			},
 
 			async delete(this: IHookFunctions): Promise<boolean> {
 				const webhookData = this.getWorkflowStaticData('node');
+
+				// TODO: Delete webhook from Visualping
 
 				if (webhookData.webhookId !== undefined) {
 		
