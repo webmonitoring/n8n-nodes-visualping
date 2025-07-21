@@ -5,38 +5,7 @@ import type {
 	IHookFunctions,
 } from 'n8n-workflow';
 import {  NodeConnectionType } from 'n8n-workflow';
-import { testWebhookUrl, updateJobWebhookUrl } from '../Visualping/GenericFunctions';
-
-/**
- * Extract production and test URLs from a webhook URL
- * @param webhookUrl - The webhook URL from getNodeWebhookUrl
- * @returns Object containing prodUrl and testUrl
- */
-function getWebhookUrls(webhookUrl: string): { prodUrl: string; testUrl: string } {
-	// Parse the URL to extract components
-	const urlParts = webhookUrl.split('/');
-	
-	// Find the workflow ID (it's the UUID after /webhook/ or /webhook-test/)
-	const workflowIdIndex = urlParts.findIndex((part: string) => 
-		part === 'webhook' || part === 'webhook-test'
-	);
-	
-	if (workflowIdIndex === -1 || workflowIdIndex + 1 >= urlParts.length) {
-		throw new Error('Invalid webhook URL format');
-	}
-	
-	const workflowId = urlParts[workflowIdIndex + 1];
-	const remainingPath = urlParts.slice(workflowIdIndex + 2).join('/');
-	
-	// Get the base URL (protocol + host)
-	const baseUrl = urlParts.slice(0, workflowIdIndex).join('/');
-	
-	// Construct the URLs
-	const prodUrl = `${baseUrl}/webhook/${workflowId}/${remainingPath}`;
-	const testUrl = `${baseUrl}/webhook-test/${workflowId}/${remainingPath}`;
-	
-	return { prodUrl, testUrl };
-}
+import { getJobData, getWebhookUrls, getWorkspaces, testWebhookUrl, updateJobWebhookUrl } from '../Visualping/GenericFunctions';
 
 export class VisualpingTrigger implements INodeType {
 	description: INodeTypeDescription = {
@@ -59,12 +28,15 @@ export class VisualpingTrigger implements INodeType {
 		],
 		properties: [
 			{
-				displayName: 'Workspace ID',
+				displayName: 'Workspace (business account)',
 				name: 'workspaceId',
-				type: 'string',
-				default: '',
-				description: 'The Visualping Workspace ID where the job is running',
+				type: 'options',
+				description: 'The Visualping Workspace where the job is running (business account required)',
+				typeOptions: {
+				   loadOptionsMethod: 'getWorkspaces',
+				},
 				required: true,
+				default: '',
 			},
 			{
 				displayName: 'Job ID',
@@ -84,6 +56,12 @@ export class VisualpingTrigger implements INodeType {
 			},
 		],
 	};
+
+	methods = {
+		loadOptions: {
+		  getWorkspaces,
+		},
+	  };
 	
 	webhookMethods = {
 		default: {
@@ -107,13 +85,17 @@ export class VisualpingTrigger implements INodeType {
 			},
 			async create(this: IHookFunctions): Promise<boolean> {
 				const webhookUrl = this.getNodeWebhookUrl('default') as string;
-				const workspaceId = this.getNodeParameter('jobId') as number;
+				const workspaceId = this.getNodeParameter('workspaceId') as number;
 				const jobId = this.getNodeParameter('jobId') as number;
 
 				const { prodUrl, testUrl } = getWebhookUrls(webhookUrl);
+				const { webhookJobUrl } = await getJobData.call(this, jobId, workspaceId);
 
 				await testWebhookUrl.call(this, testUrl, jobId);
-				await updateJobWebhookUrl.call(this, prodUrl, jobId, workspaceId);
+
+				if(webhookJobUrl !== prodUrl) {
+					await updateJobWebhookUrl.call(this, prodUrl, jobId, workspaceId);
+				}
 
 				return true;
 			},
