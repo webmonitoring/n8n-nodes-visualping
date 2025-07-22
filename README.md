@@ -1,4 +1,4 @@
-# n8n Nodes - Visualping integration
+# n8n-nodes-visualping
 
 This is an n8n community node that integrates [Visualping](https://visualping.io) with your n8n workflows, allowing you to trigger workflows when website changes are detected.
 
