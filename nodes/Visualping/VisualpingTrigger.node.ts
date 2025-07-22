@@ -21,7 +21,7 @@ export class VisualpingTrigger implements INodeType {
 		icon: 'file:icons/visualping.svg',
 		group: ['trigger'],
 		version: 1,
-		description: 'Starts the workflow when Visualping calls the webhook',
+		description: 'Triggers workflow on Visualping job events',
 		defaults: {
 			name: 'Visualping Trigger',
 		},
@@ -131,9 +131,7 @@ export class VisualpingTrigger implements INodeType {
 				};
 				const jobId = Number(jobResource.value);
 
-
 				await deleteJobWebhookUrl.call(this, prodUrl, jobId);
-			
 
 				if (webhookData.webhookId !== undefined) {
 					try {

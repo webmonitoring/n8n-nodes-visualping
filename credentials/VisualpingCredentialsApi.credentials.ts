@@ -13,7 +13,7 @@ export type VisualpingCredentials = {
 
 export class VisualpingCredentialsApi implements ICredentialType {
 	name = 'visualpingCredentialsApi';
-	displayName = 'Visualping Credentials';
+	displayName = 'Visualping Credentials API';
 	icon = 'file:visualping.svg' as const;
 	documentationUrl = 'https://api.visualping.io/doc.html#section/Authentication';
 

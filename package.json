@@ -3,14 +3,16 @@
   "version": "0.1.0",
   "description": "This is an n8n community node. It lets you use Visualping in your n8n workflows.",
   "keywords": [
+    "n8n",
+    "n8n-nodes",
     "n8n-community-node-package",
     "visualping"
   ],
   "license": "MIT",
   "homepage": "https://visualping.io/",
   "author": {
-    "name": "",
-    "email": ""
+    "name": "Visualping",
+    "email": "support@visualping.io"
   },
   "repository": {
     "type": "git",
