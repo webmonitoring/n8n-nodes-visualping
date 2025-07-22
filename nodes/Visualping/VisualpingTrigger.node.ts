@@ -73,7 +73,7 @@ export class VisualpingTrigger implements INodeType {
 				name: 'default',
 				httpMethod: 'POST',
 				responseMode: 'onReceived',
-				path: '={{"n8n-nodes-visualping/job/" + $parameter["job"]["value"]}}',
+				path: '={{"n8n-nodes-visualping/job/"}}',
 			},
 		],
 	};
@@ -90,13 +90,11 @@ export class VisualpingTrigger implements INodeType {
 					mode: string;
 					value: string | number;
 				};
+				const jobId = Number(jobResource.value);
 
 				try {
 					const { prodUrl } = getWebhookUrls(webhookUrl);
-					const { webhookJobUrl } = await getJobData.call(
-						this,
-						Number(jobResource.value),
-					);
+					const { webhookJobUrl } = await getJobData.call(this, jobId);
 					return webhookJobUrl === prodUrl;
 				} catch (error) {
 					if (error.response && error.response.status === 404) {
@@ -107,16 +105,16 @@ export class VisualpingTrigger implements INodeType {
 			},
 			async create(this: IHookFunctions): Promise<boolean> {
 				const webhookUrl = this.getNodeWebhookUrl('default') as string;
-				const workspaceId = this.getNodeParameter('workspaceId') as number;
 				const jobResource = this.getNodeParameter('job') as {
 					mode: string;
 					value: string | number;
 				};
+				const jobId = Number(jobResource.value);
 
 				const { prodUrl, testUrl } = getWebhookUrls(webhookUrl);
 
-				await testWebhookUrl.call(this, testUrl, Number(jobResource.value));
-				await updateJobWebhookUrl.call(this, prodUrl, Number(jobResource.value), workspaceId);
+				await testWebhookUrl.call(this, testUrl, jobId);
+				await updateJobWebhookUrl.call(this, prodUrl, jobId);
 
 				return true;
 			},

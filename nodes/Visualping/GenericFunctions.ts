@@ -1,4 +1,4 @@
-import { IExecuteFunctions, NodeOperationError, IHookFunctions, ILoadOptionsFunctions, INodePropertyOptions } from 'n8n-workflow';
+import { IExecuteFunctions, NodeOperationError, IHookFunctions, ILoadOptionsFunctions } from 'n8n-workflow';
 import { authApiUrl, VisualpingCredentials } from '../../credentials/VisualpingCredentialsApi.credentials';
 
 export async function requestIdToken(this: IExecuteFunctions | IHookFunctions | ILoadOptionsFunctions) {
@@ -63,14 +63,15 @@ export async function getUserData(
 	return response;
   }
 
-export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: string, jobId: number, workspaceId: number) {
+export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: string, jobId: number) {
 	const id_token = await requestIdToken.call(this);
+	const { organisation } = await getUserData.call(this);
 
 	const response = await this.helpers.request({
 		method: 'PUT',
 		url: `https://job.api.visualping.io/v2/jobs/${jobId}`,
 		body: {
-			workspaceId: 37813,
+			organisationId: organisation.id,
 			"notification": {
 				"config": {
 					"webhook": {
