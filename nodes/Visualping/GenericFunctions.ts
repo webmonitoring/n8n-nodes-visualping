@@ -1,4 +1,4 @@
-import { IExecuteFunctions, NodeOperationError, IHookFunctions, ILoadOptionsFunctions, INodePropertyOptions } from 'n8n-workflow';
+import { IExecuteFunctions, NodeOperationError, IHookFunctions, ILoadOptionsFunctions } from 'n8n-workflow';
 import { authApiUrl, VisualpingCredentials } from '../../credentials/VisualpingCredentialsApi.credentials';
 
 export async function requestIdToken(this: IExecuteFunctions | IHookFunctions | ILoadOptionsFunctions) {
@@ -45,14 +45,12 @@ export async function testWebhookUrl(this: IHookFunctions, webhookUrl: string, j
 	return response;
 }
 
-export async function getWorkspaces(
-	this: ILoadOptionsFunctions,
-  ): Promise<INodePropertyOptions[]> {
-	const returnData: INodePropertyOptions[] = [];
-
+export async function getUserData(
+	this: IExecuteFunctions | IHookFunctions | ILoadOptionsFunctions,
+  ): Promise<{organisation: {id: number}}> {
 	const id_token = await requestIdToken.call(this);
 
-	const { workspaces } = await this.helpers.request({
+	const response = await this.helpers.request({
 		method: 'GET',
 		url: `https://account.api.visualping.io/describe-user`,
 		headers: {
@@ -62,28 +60,18 @@ export async function getWorkspaces(
 	});
 
 
-	for (const workspace of workspaces) {
-	  if (workspace.name === undefined || workspace.id === undefined) {
-		continue;
-	  }
-
-	  returnData.push({
-		name: workspace.name,
-		value: workspace.id,
-	  });
-	}
-
-	return returnData;
+	return response;
   }
 
-export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: string, jobId: number, workspaceId: number) {
+export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: string, jobId: number) {
 	const id_token = await requestIdToken.call(this);
+	const { organisation } = await getUserData.call(this);
 
 	const response = await this.helpers.request({
 		method: 'PUT',
 		url: `https://job.api.visualping.io/v2/jobs/${jobId}`,
 		body: {
-			workspaceId: 37813,
+			organisationId: organisation.id,
 			"notification": {
 				"config": {
 					"webhook": {
@@ -104,12 +92,13 @@ export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 
 
 
-export async function getJobData(this: IHookFunctions, jobId: number, workspaceId: number) {
+export async function getJobData(this: IHookFunctions, jobId: number) {
 	const id_token = await requestIdToken.call(this);
+	const { organisation } = await getUserData.call(this);
 
 	const response = await this.helpers.request({
 		method: 'GET',
-		url: `https://job.api.visualping.io/v2/jobs/${jobId}?jobId=${jobId}&workspaceId=${workspaceId}`,
+		url: `https://job.api.visualping.io/v2/jobs/${jobId}?jobId=${jobId}&organisationId=${organisation.id}`,
 		headers: {
 			'Authorization': id_token
 		},
