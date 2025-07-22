@@ -29,7 +29,7 @@ export class VisualpingTrigger implements INodeType {
 		outputs: [NodeConnectionType.Main],
 		credentials: [
 			{
-				name: 'visualpingApi',
+				name: 'visualpingCredentialsApi',
 				required: true,
 			},
 		],
