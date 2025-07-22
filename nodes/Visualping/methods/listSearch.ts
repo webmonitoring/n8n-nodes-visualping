@@ -18,7 +18,7 @@ export async function jobSearch(
 	try {
 		const response = await this.helpers.request({
 			method: 'GET',
-			url: `https://job.api.visualping.io/v2/jobs?pageSize=100&pageIndex=0${filter ? `&fullTextSearchFilter=${filter}` : ''}&mode=normal&sortBy=&organisationId=${organisation.id}`,
+			url: `https://beta.job.api.visualping.io/v2/jobs?pageSize=100&pageIndex=0${filter ? `&fullTextSearchFilter=${filter}` : ''}&mode=normal&sortBy=&organisationId=${organisation.id}`,
 			headers: {
 				'Authorization': id_token
 			},

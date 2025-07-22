@@ -29,7 +29,7 @@ export class VisualpingTrigger implements INodeType {
 		outputs: [NodeConnectionType.Main],
 		credentials: [
 			{
-				name: 'visualpingCredentialsApi',
+				name: 'visualpingApi',
 				required: true,
 			},
 		],
@@ -147,7 +147,7 @@ export class VisualpingTrigger implements INodeType {
 			},
 		},
 	};
-
+	
 	async webhook(this: IWebhookFunctions): Promise<any> {
 		const body = this.getRequestObject().body;
 

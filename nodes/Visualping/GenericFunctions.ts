@@ -34,7 +34,7 @@ export async function testWebhookUrl(this: IHookFunctions, webhookUrl: string, j
 
 	const response = await this.helpers.request({
 		method: 'POST',
-		url: "https://job.api.visualping.io/v2/jobs/notification/push",
+		url: "https://beta.job.api.visualping.io/v2/jobs/notification/push",
 		body: {
 			jobId: Number(jobId),
 			notificationType: "webhook",
@@ -56,7 +56,7 @@ export async function getUserData(
 
 	const response = await this.helpers.request({
 		method: 'GET',
-		url: `https://account.api.visualping.io/describe-user`,
+		url: `https://beta.account.api.visualping.io/describe-user`,
 		headers: {
 			'Authorization': id_token,
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
@@ -74,7 +74,7 @@ export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 
 	const response = await this.helpers.request({
 		method: 'PUT',
-		url: `https://job.api.visualping.io/v2/jobs/${jobId}`,
+		url: `https://beta.job.api.visualping.io/v2/jobs/${jobId}`,
 		body: {
 			organisationId: organisation.id,
 			"notification": {
@@ -102,7 +102,7 @@ export async function deleteJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 
 	const response = await this.helpers.request({
 		method: 'PUT',
-		url: `https://job.api.visualping.io/v2/jobs/${jobId}`,
+		url: `https://beta.job.api.visualping.io/v2/jobs/${jobId}`,
 		body: {
 			organisationId: organisation.id,
 			"notification": {
@@ -132,7 +132,7 @@ export async function getJobData(this: IHookFunctions, jobId: number) {
 
 	const response = await this.helpers.request({
 		method: 'GET',
-		url: `https://job.api.visualping.io/v2/jobs/${jobId}?jobId=${jobId}&organisationId=${organisation.id}`,
+		url: `https://beta.job.api.visualping.io/v2/jobs/${jobId}?jobId=${jobId}&organisationId=${organisation.id}`,
 		headers: {
 			'Authorization': id_token,
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
