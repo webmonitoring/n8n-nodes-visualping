@@ -4,7 +4,7 @@ import {
 	INodeProperties,
 } from 'n8n-workflow';
 
-export const authApiUrl = 'https://beta.api.visualping.io/v2/token';
+export const authApiUrl = 'https://beta.account.api.visualping.io/v2/token';
 
 export type VisualpingCredentials = {
 	email: string;
