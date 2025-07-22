@@ -90,6 +90,33 @@ export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 	return response;
 }
 
+export async function deleteJobWebhookUrl(this: IHookFunctions, webhookUrl: string, jobId: number) {
+	const id_token = await requestIdToken.call(this);
+	const { organisation } = await getUserData.call(this);
+
+	const response = await this.helpers.request({
+		method: 'PUT',
+		url: `https://job.api.visualping.io/v2/jobs/${jobId}`,
+		body: {
+			organisationId: organisation.id,
+			"notification": {
+				"config": {
+					"webhook": {
+						"url": webhookUrl,
+						"active": false,
+						"notificationType": "webhook"
+					}
+				}
+			}
+		},
+		headers: {
+			'Authorization': id_token
+		},
+	});
+
+	return response;
+}
+
 
 
 export async function getJobData(this: IHookFunctions, jobId: number) {

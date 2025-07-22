@@ -6,6 +6,7 @@ import type {
 } from 'n8n-workflow';
 import { NodeConnectionType } from 'n8n-workflow';
 import {
+	deleteJobWebhookUrl,
 	getJobData,
 	getWebhookUrls,
 	testWebhookUrl,
@@ -121,8 +122,18 @@ export class VisualpingTrigger implements INodeType {
 
 			async delete(this: IHookFunctions): Promise<boolean> {
 				const webhookData = this.getWorkflowStaticData('node');
+				const webhookUrl = this.getNodeWebhookUrl('default') as string;
 
-				// TODO: Delete webhook from Visualping
+				const { prodUrl } = getWebhookUrls(webhookUrl);
+				const jobResource = this.getNodeParameter('job') as {
+					mode: string;
+					value: string | number;
+				};
+				const jobId = Number(jobResource.value);
+
+
+				await deleteJobWebhookUrl.call(this, prodUrl, jobId);
+			
 
 				if (webhookData.webhookId !== undefined) {
 					try {
