@@ -95,8 +95,8 @@ export class VisualpingTrigger implements INodeType {
 
 				try {
 					const { prodUrl } = getWebhookUrls(webhookUrl);
-					const { webhookJobUrl } = await getJobData.call(this, jobId);
-					return webhookJobUrl === prodUrl;
+					const { webhookData } = await getJobData.call(this, jobId);
+					return webhookData?.url === prodUrl && webhookData?.active;
 				} catch (error) {
 					if (error.response && error.response.status === 404) {
 						return false;
