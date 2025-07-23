@@ -36,7 +36,7 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/VisualpingApi.credentials.js"
+      "dist/credentials/VisualpingCredentialsApi.credentials.js"
     ],
     "nodes": [
       "dist/nodes/Visualping/VisualpingTrigger.node.js"

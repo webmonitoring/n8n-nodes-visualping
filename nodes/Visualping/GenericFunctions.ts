@@ -79,7 +79,7 @@ export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 			organisationId: organisation.id,
 			"notification": {
 				"config": {
-					"webhook": {
+					"n8n": {
 						"url": webhookUrl,
 						"active": true,
 						"notificationType": "webhook"
@@ -107,7 +107,7 @@ export async function deleteJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 			organisationId: organisation.id,
 			"notification": {
 				"config": {
-					"webhook": {
+					"n8n": {
 						"url": webhookUrl,
 						"active": false,
 						"notificationType": "webhook"
@@ -140,9 +140,9 @@ export async function getJobData(this: IHookFunctions, jobId: number) {
 		json: true,
 	});
 
-	const webhookJobUrl = response?.notification?.config?.webhook?.url;
+	const webhookData = response?.notification?.config?.n8n;
 
-	return { webhookJobUrl, ...response };
+	return { webhookData, ...response };
 }
 
 export function getWebhookUrls(webhookUrl: string): { prodUrl: string; testUrl: string } {
