@@ -43,6 +43,7 @@ export class VisualpingCredentialsApi implements ICredentialType {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
+				'x-api-client': 'visualping.io-n8n-nodes-visualping',
 			},
 			body: {
 				method: 'PASSWORD',

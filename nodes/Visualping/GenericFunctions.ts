@@ -17,6 +17,9 @@ export async function requestIdToken(this: IExecuteFunctions | IHookFunctions | 
 				method: 'PASSWORD',
 			},
 			json: true,
+			headers: {
+				'x-api-client': 'visualping.io-n8n-nodes-visualping',
+			},
 		});
 		id_token = authResponse.id_token;
 		if (!id_token) throw new Error('No token received from Visualping API');
@@ -38,7 +41,8 @@ export async function testWebhookUrl(this: IHookFunctions, webhookUrl: string, j
 			url: webhookUrl,
 		},
 		headers: {
-			'Authorization': id_token
+			'Authorization': id_token,
+			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
 	});
 
@@ -54,7 +58,8 @@ export async function getUserData(
 		method: 'GET',
 		url: `https://account.api.visualping.io/describe-user`,
 		headers: {
-			'Authorization': id_token
+			'Authorization': id_token,
+			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
 		json: true,
 	});
@@ -83,7 +88,8 @@ export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 			}
 		},
 		headers: {
-			'Authorization': id_token
+			'Authorization': id_token,
+			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
 	});
 
@@ -110,7 +116,8 @@ export async function deleteJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 			}
 		},
 		headers: {
-			'Authorization': id_token
+			'Authorization': id_token,
+			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
 	});
 
@@ -127,7 +134,8 @@ export async function getJobData(this: IHookFunctions, jobId: number) {
 		method: 'GET',
 		url: `https://job.api.visualping.io/v2/jobs/${jobId}?jobId=${jobId}&organisationId=${organisation.id}`,
 		headers: {
-			'Authorization': id_token
+			'Authorization': id_token,
+			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
 		json: true,
 	});
