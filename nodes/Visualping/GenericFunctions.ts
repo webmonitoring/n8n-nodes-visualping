@@ -11,14 +11,14 @@ export async function requestIdToken(this: IExecuteFunctions | IHookFunctions | 
 		const authResponse = await this.helpers.request({
 			method: 'POST',
 			url: authApiUrl,
+			json: true,
+			headers: {
+				'x-api-client': 'visualping.io-n8n-nodes-visualping',
+			},
 			body: {
 				email: credentials.email,
 				password: credentials.password,
 				method: 'PASSWORD',
-			},
-			json: true,
-			headers: {
-				'x-api-client': 'visualping.io-n8n-nodes-visualping',
 			},
 		});
 		id_token = authResponse.id_token;
@@ -33,13 +33,14 @@ export async function testWebhookUrl(this: IHookFunctions, webhookUrl: string, j
 	const options: IHttpRequestOptions = {
 		method: 'POST',
 		url: "https://job.api.visualping.io/v2/jobs/notification/push",
+		json: true,
+		headers: {
+			'x-api-client': 'visualping.io-n8n-nodes-visualping',
+		},
 		body: {
 			jobId: Number(jobId),
 			notificationType: "webhook",
 			url: webhookUrl,
-		},
-		headers: {
-			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
 	}
 
@@ -70,6 +71,10 @@ export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 	const options: IHttpRequestOptions = {
 		method: 'PUT',
 		url: `https://job.api.visualping.io/v2/jobs/${jobId}`,
+		json: true,
+		headers: {
+			'x-api-client': 'visualping.io-n8n-nodes-visualping',
+		},
 		body: {
 			organisationId: organisation.id,
 			"notification": {
@@ -81,9 +86,6 @@ export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 					}
 				}
 			}
-		},
-		headers: {
-			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
 	}
 	
@@ -97,6 +99,10 @@ export async function deleteJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 	const options: IHttpRequestOptions = {
 		method: 'PUT',
 		url: `https://job.api.visualping.io/v2/jobs/${jobId}`,
+		json: true,
+		headers: {
+			'x-api-client': 'visualping.io-n8n-nodes-visualping',
+		},
 		body: {
 			organisationId: organisation.id,
 			"notification": {
@@ -108,9 +114,6 @@ export async function deleteJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 					}
 				}
 			}
-		},
-		headers: {
-			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
 	}
 
@@ -126,6 +129,7 @@ export async function getJobData(this: IHookFunctions, jobId: number) {
 	const options: IHttpRequestOptions = {
 		method: 'GET',
 		url: `https://job.api.visualping.io/v2/jobs/${jobId}?jobId=${jobId}&organisationId=${organisation.id}`,
+		json: true,
 		headers: {
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},

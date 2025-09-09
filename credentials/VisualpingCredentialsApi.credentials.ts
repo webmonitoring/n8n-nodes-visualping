@@ -55,14 +55,14 @@ export class VisualpingCredentialsApi implements ICredentialType {
 		const authResponse = await this.helpers.httpRequest({
 			method: 'POST',
 			url: authApiUrl,
+			json: true,
+			headers: {
+				'x-api-client': 'visualping.io-n8n-nodes-visualping',
+			},
 			body: {
 				email: credentials.email,
 				password: credentials.password,
 				method: 'PASSWORD',
-			},
-			json: true,
-			headers: {
-				'x-api-client': 'visualping.io-n8n-nodes-visualping',
 			},
 		});
 
