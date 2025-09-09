@@ -1,9 +1,10 @@
 import type {
+	IHttpRequestOptions,
 	ILoadOptionsFunctions,
 	INodeListSearchResult,
 	INodePropertyOptions,
 } from 'n8n-workflow';
-import { getUserData, requestIdToken } from '../GenericFunctions';
+import { getUserData } from '../GenericFunctions';
 
 export async function jobSearch(
 	this: ILoadOptionsFunctions,
@@ -12,18 +13,20 @@ export async function jobSearch(
 ): Promise<INodeListSearchResult> {
 	const returnData: INodePropertyOptions[] = [];
 
-	const id_token = await requestIdToken.call(this);
 	const { organisation } = await getUserData.call(this);
 
 	try {
-		const response = await this.helpers.request({
+		const options: IHttpRequestOptions = {
 			method: 'GET',
 			url: `https://job.api.visualping.io/v2/jobs?pageSize=100&pageIndex=0${filter ? `&fullTextSearchFilter=${filter}` : ''}&mode=normal&sortBy=&organisationId=${organisation.id}`,
-			headers: {
-				'Authorization': id_token
-			},
 			json: true,
-		});
+			headers: {
+				'x-api-client': 'visualping.io-n8n-nodes-visualping',
+			},
+		}
+
+		const response = await this.helpers.httpRequestWithAuthentication.call(this,  'visualpingCredentialsApi', options);
+
 
 		const jobs = response.jobs || response || [];
 

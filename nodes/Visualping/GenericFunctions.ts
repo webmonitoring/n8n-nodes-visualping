@@ -1,4 +1,4 @@
-import { IExecuteFunctions, NodeOperationError, IHookFunctions, ILoadOptionsFunctions } from 'n8n-workflow';
+import { IExecuteFunctions, NodeOperationError, IHookFunctions, ILoadOptionsFunctions, IHttpRequestOptions } from 'n8n-workflow';
 import { authApiUrl, VisualpingCredentials } from '../../credentials/VisualpingCredentialsApi.credentials';
 
 export async function requestIdToken(this: IExecuteFunctions | IHookFunctions | ILoadOptionsFunctions) {
@@ -30,9 +30,7 @@ export async function requestIdToken(this: IExecuteFunctions | IHookFunctions | 
 }
 
 export async function testWebhookUrl(this: IHookFunctions, webhookUrl: string, jobId: number) {
-	const id_token = await requestIdToken.call(this);
-
-	const response = await this.helpers.request({
+	const options: IHttpRequestOptions = {
 		method: 'POST',
 		url: "https://job.api.visualping.io/v2/jobs/notification/push",
 		body: {
@@ -41,38 +39,35 @@ export async function testWebhookUrl(this: IHookFunctions, webhookUrl: string, j
 			url: webhookUrl,
 		},
 		headers: {
-			'Authorization': id_token,
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
-	});
+	}
 
+	const response = await this.helpers.httpRequestWithAuthentication.call(this, 'visualpingCredentialsApi', options);
 	return response;
 }
 
 export async function getUserData(
 	this: IExecuteFunctions | IHookFunctions | ILoadOptionsFunctions,
   ): Promise<{organisation: {id: number}}> {
-	const id_token = await requestIdToken.call(this);
 
-	const response = await this.helpers.request({
+	const options: IHttpRequestOptions = {
 		method: 'GET',
 		url: `https://account.api.visualping.io/describe-user`,
+		json: true,
 		headers: {
-			'Authorization': id_token,
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
-		json: true,
-	});
+	}
 
-
+	const response = await this.helpers.httpRequestWithAuthentication.call(this, 'visualpingCredentialsApi', options);
 	return response;
   }
 
 export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: string, jobId: number) {
-	const id_token = await requestIdToken.call(this);
 	const { organisation } = await getUserData.call(this);
 
-	const response = await this.helpers.request({
+	const options: IHttpRequestOptions = {
 		method: 'PUT',
 		url: `https://job.api.visualping.io/v2/jobs/${jobId}`,
 		body: {
@@ -88,19 +83,18 @@ export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 			}
 		},
 		headers: {
-			'Authorization': id_token,
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
-	});
-
+	}
+	
+	const response = await this.helpers.httpRequestWithAuthentication.call(this, 'visualpingCredentialsApi', options);
 	return response;
 }
 
 export async function deleteJobWebhookUrl(this: IHookFunctions, webhookUrl: string, jobId: number) {
-	const id_token = await requestIdToken.call(this);
 	const { organisation } = await getUserData.call(this);
 
-	const response = await this.helpers.request({
+	const options: IHttpRequestOptions = {
 		method: 'PUT',
 		url: `https://job.api.visualping.io/v2/jobs/${jobId}`,
 		body: {
@@ -116,29 +110,28 @@ export async function deleteJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 			}
 		},
 		headers: {
-			'Authorization': id_token,
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
-	});
+	}
 
+	const response = await this.helpers.httpRequestWithAuthentication.call(this, 'visualpingCredentialsApi', options);
 	return response;
 }
 
 
 
 export async function getJobData(this: IHookFunctions, jobId: number) {
-	const id_token = await requestIdToken.call(this);
 	const { organisation } = await getUserData.call(this);
 
-	const response = await this.helpers.request({
+	const options: IHttpRequestOptions = {
 		method: 'GET',
 		url: `https://job.api.visualping.io/v2/jobs/${jobId}?jobId=${jobId}&organisationId=${organisation.id}`,
 		headers: {
-			'Authorization': id_token,
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
-		json: true,
-	});
+	}
+
+	const response = await this.helpers.httpRequestWithAuthentication.call(this, 'visualpingCredentialsApi', options);
 
 	const webhookData = response?.notification?.config?.n8n;
 
