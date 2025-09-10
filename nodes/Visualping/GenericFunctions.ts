@@ -1,33 +1,4 @@
-import { IExecuteFunctions, NodeOperationError, IHookFunctions, ILoadOptionsFunctions, IHttpRequestOptions } from 'n8n-workflow';
-import { authApiUrl, VisualpingCredentials } from '../../credentials/VisualpingCredentialsApi.credentials';
-
-export async function requestIdToken(this: IExecuteFunctions | IHookFunctions | ILoadOptionsFunctions) {
-	const credentials = (await this.getCredentials(
-		'visualpingCredentialsApi',
-	)) as VisualpingCredentials;
-
-	let id_token: string;
-	try {
-		const authResponse = await this.helpers.request({
-			method: 'POST',
-			url: authApiUrl,
-			json: true,
-			headers: {
-				'x-api-client': 'visualping.io-n8n-nodes-visualping',
-			},
-			body: {
-				email: credentials.email,
-				password: credentials.password,
-				method: 'PASSWORD',
-			},
-		});
-		id_token = authResponse.id_token;
-		if (!id_token) throw new Error('No token received from Visualping API');
-		return id_token;
-	} catch (error) {
-		throw new NodeOperationError(this.getNode(), 'Authentication failed: ' + error.message);
-	}
-}
+import { IExecuteFunctions, IHookFunctions, ILoadOptionsFunctions, IHttpRequestOptions } from 'n8n-workflow';
 
 export async function testWebhookUrl(this: IHookFunctions, webhookUrl: string, jobId: number) {
 	const options: IHttpRequestOptions = {
@@ -63,7 +34,7 @@ export async function getUserData(
 
 	const response = await this.helpers.httpRequestWithAuthentication.call(this, 'visualpingCredentialsApi', options);
 	return response;
-  }
+}
 
 export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: string, jobId: number) {
 	const { organisation } = await getUserData.call(this);
@@ -121,8 +92,6 @@ export async function deleteJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 	return response;
 }
 
-
-
 export async function getJobData(this: IHookFunctions, jobId: number) {
 	const { organisation } = await getUserData.call(this);
 
@@ -167,5 +136,3 @@ export function getWebhookUrls(webhookUrl: string): { prodUrl: string; testUrl: 
 	
 	return { prodUrl, testUrl };
 }
-
-

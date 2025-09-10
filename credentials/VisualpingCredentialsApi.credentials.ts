@@ -49,8 +49,7 @@ export class VisualpingCredentialsApi implements ICredentialType {
 		},
 	];
 
-	
-	async preAuthentication(this: IHttpRequestHelper, credentials: ICredentialDataDecryptedObject): Promise<{id_token: string}> {
+	async preAuthentication(this: IHttpRequestHelper, credentials: ICredentialDataDecryptedObject): Promise<{ id_token: string }> {
 		// Get the id_token during pre-authentication
 		const authResponse = await this.helpers.httpRequest({
 			method: 'POST',
@@ -74,7 +73,6 @@ export class VisualpingCredentialsApi implements ICredentialType {
 			id_token: authResponse.id_token,
 		};
 	};
-
 
 	authenticate: IAuthenticateGeneric = {
 		type: 'generic',
