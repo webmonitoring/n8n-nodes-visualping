@@ -27,7 +27,6 @@ export async function jobSearch(
 
 		const response = await this.helpers.httpRequestWithAuthentication.call(this,  'visualpingCredentialsApi', options);
 
-
 		const jobs = response.jobs || response || [];
 
 		for (const job of jobs) {

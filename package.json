@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-visualping",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "This is an n8n community node. It lets you use Visualping in your n8n workflows.",
   "keywords": [
     "n8n",
