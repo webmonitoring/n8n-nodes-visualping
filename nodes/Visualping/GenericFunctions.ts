@@ -1,9 +1,15 @@
 import { IExecuteFunctions, IHookFunctions, ILoadOptionsFunctions, IHttpRequestOptions } from 'n8n-workflow';
 
+export const apiRoutes = {
+	auth: 'https://api.visualping.io/v2/token',
+	job: 'https://job.api.visualping.io/v2/jobs',
+	account: 'https://account.api.visualping.io',
+}
+
 export async function testWebhookUrl(this: IHookFunctions, webhookUrl: string, jobId: number) {
 	const options: IHttpRequestOptions = {
 		method: 'POST',
-		url: "https://job.api.visualping.io/v2/jobs/notification/push",
+		url: `${apiRoutes.job}/notification/push`,
 		json: true,
 		headers: {
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
@@ -25,7 +31,7 @@ export async function getUserData(
 
 	const options: IHttpRequestOptions = {
 		method: 'GET',
-		url: `https://account.api.visualping.io/describe-user`,
+		url: `${apiRoutes.account}/describe-user`,
 		json: true,
 		headers: {
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
@@ -41,7 +47,7 @@ export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 
 	const options: IHttpRequestOptions = {
 		method: 'PUT',
-		url: `https://job.api.visualping.io/v2/jobs/${jobId}`,
+		url: `${apiRoutes.job}/${jobId}`,
 		json: true,
 		headers: {
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
@@ -69,7 +75,7 @@ export async function deleteJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 
 	const options: IHttpRequestOptions = {
 		method: 'PUT',
-		url: `https://job.api.visualping.io/v2/jobs/${jobId}`,
+		url: `${apiRoutes.job}/${jobId}`,
 		json: true,
 		headers: {
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
@@ -97,7 +103,7 @@ export async function getJobData(this: IHookFunctions, jobId: number) {
 
 	const options: IHttpRequestOptions = {
 		method: 'GET',
-		url: `https://job.api.visualping.io/v2/jobs/${jobId}?jobId=${jobId}&organisationId=${organisation.id}`,
+		url: `${apiRoutes.job}/${jobId}?jobId=${jobId}&organisationId=${organisation.id}`,
 		json: true,
 		headers: {
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
