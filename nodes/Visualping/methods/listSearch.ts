@@ -24,9 +24,9 @@ export async function jobSearch(
 				pageSize: 100,
 				pageIndex: 0,
 				mode: 'normal',
-				organisationId: organisation.id,
 				sortBy: '',
 				fullTextSearchFilter: filter,
+				...(organisation?.id && { organisationId: organisation.id }),
 			},
 			headers: {
 				'x-api-client': 'visualping.io-n8n-nodes-visualping',

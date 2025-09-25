@@ -27,7 +27,7 @@ export async function testWebhookUrl(this: IHookFunctions, webhookUrl: string, j
 
 export async function getUserData(
 	this: IExecuteFunctions | IHookFunctions | ILoadOptionsFunctions,
-  ): Promise<{organisation: {id: number}}> {
+  ): Promise<{ organisation?: { id?: number }}> {
 
 	const options: IHttpRequestOptions = {
 		method: 'GET',
@@ -53,7 +53,7 @@ export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
 		body: {
-			organisationId: organisation.id,
+			organisationId: organisation?.id,
 			"notification": {
 				"config": {
 					"n8n": {
@@ -81,7 +81,7 @@ export async function deleteJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
 		body: {
-			organisationId: organisation.id,
+			organisationId: organisation?.id,
 			"notification": {
 				"config": {
 					"n8n": {
@@ -103,7 +103,11 @@ export async function getJobData(this: IHookFunctions, jobId: number) {
 
 	const options: IHttpRequestOptions = {
 		method: 'GET',
-		url: `${apiRoutes.job}/${jobId}?jobId=${jobId}&organisationId=${organisation.id}`,
+		url: `${apiRoutes.job}/${jobId}`,
+		qs: {
+			jobId,
+			...(organisation?.id && { organisationId: organisation.id }),
+		},
 		json: true,
 		headers: {
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
