@@ -40,6 +40,7 @@ export class VisualpingTrigger implements INodeType {
 				type: 'resourceLocator',
 				default: { mode: 'list', value: '' },
 				required: true,
+				description: 'Select a job from the list or enter a job ID. Don’t see any jobs? <a href="https://visualping.io/">Create a new job on Visualping</a>.',
 				modes: [
 					{
 						displayName: 'From List',

@@ -19,7 +19,6 @@ export async function jobSearch(
 		const options: IHttpRequestOptions = {
 			method: 'GET',
 			url: apiRoutes.job,
-
 			json: true,
 			qs: {
 				pageSize: 100,
