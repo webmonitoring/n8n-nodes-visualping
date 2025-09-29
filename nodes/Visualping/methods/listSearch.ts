@@ -4,7 +4,7 @@ import type {
 	INodeListSearchResult,
 	INodePropertyOptions,
 } from 'n8n-workflow';
-import { getUserData } from '../GenericFunctions';
+import { apiRoutes, getUserData } from '../GenericFunctions';
 
 export async function jobSearch(
 	this: ILoadOptionsFunctions,
@@ -18,8 +18,16 @@ export async function jobSearch(
 	try {
 		const options: IHttpRequestOptions = {
 			method: 'GET',
-			url: `https://job.api.visualping.io/v2/jobs?pageSize=100&pageIndex=0${filter ? `&fullTextSearchFilter=${filter}` : ''}&mode=normal&sortBy=&organisationId=${organisation.id}`,
+			url: apiRoutes.job,
 			json: true,
+			qs: {
+				pageSize: 100,
+				pageIndex: 0,
+				mode: 'normal',
+				sortBy: '',
+				fullTextSearchFilter: filter,
+				...(organisation?.id && { organisationId: organisation.id }),
+			},
 			headers: {
 				'x-api-client': 'visualping.io-n8n-nodes-visualping',
 			},

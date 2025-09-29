@@ -40,6 +40,7 @@ export class VisualpingTrigger implements INodeType {
 				type: 'resourceLocator',
 				default: { mode: 'list', value: '' },
 				required: true,
+				description: 'Select a job from the list or enter a job ID. Don’t see any jobs? <a href="https://visualping.io/">Create a new job on Visualping</a>.',
 				modes: [
 					{
 						displayName: 'From List',
@@ -68,6 +69,12 @@ export class VisualpingTrigger implements INodeType {
 					},
 				],
 			},
+			{
+				type: 'notice',
+				name: 'notice',
+				displayName: 'New to Visualping? <a href="https://visualping.io/" target="_blank">Create your account here</a> and explore our <a href="https://help.visualping.io/en/articles/8214849" target="_blank">n8n help guide</a> to get started.',
+				default: 'notice',
+			}
 		],
 		webhooks: [
 			{

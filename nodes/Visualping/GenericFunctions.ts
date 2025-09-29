@@ -1,38 +1,56 @@
-import { IExecuteFunctions, IHookFunctions, ILoadOptionsFunctions, IHttpRequestOptions } from 'n8n-workflow';
+import {
+	IExecuteFunctions,
+	IHookFunctions,
+	ILoadOptionsFunctions,
+	IHttpRequestOptions,
+} from 'n8n-workflow';
+
+export const apiRoutes = {
+	auth: 'https://api.visualping.io/v2/token',
+	job: 'https://job.api.visualping.io/v2/jobs',
+	account: 'https://account.api.visualping.io',
+};
 
 export async function testWebhookUrl(this: IHookFunctions, webhookUrl: string, jobId: number) {
 	const options: IHttpRequestOptions = {
 		method: 'POST',
-		url: "https://job.api.visualping.io/v2/jobs/notification/push",
+		url: `${apiRoutes.job}/notification/push`,
 		json: true,
 		headers: {
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
 		body: {
 			jobId: Number(jobId),
-			notificationType: "webhook",
+			notificationType: 'webhook',
 			url: webhookUrl,
 		},
-	}
+	};
 
-	const response = await this.helpers.httpRequestWithAuthentication.call(this, 'visualpingCredentialsApi', options);
+	const response = await this.helpers.httpRequestWithAuthentication.call(
+		this,
+		'visualpingCredentialsApi',
+		options,
+	);
 	return response;
 }
 
 export async function getUserData(
 	this: IExecuteFunctions | IHookFunctions | ILoadOptionsFunctions,
-  ): Promise<{organisation: {id: number}}> {
-
+): Promise<{ organisation?: { id?: number } }> {
 	const options: IHttpRequestOptions = {
 		method: 'GET',
-		url: `https://account.api.visualping.io/describe-user`,
+		url: `${apiRoutes.account}/describe-user`,
 		json: true,
 		headers: {
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
-	}
+	};
 
-	const response = await this.helpers.httpRequestWithAuthentication.call(this, 'visualpingCredentialsApi', options);
+	const response = await this.helpers.httpRequestWithAuthentication.call(
+		this,
+		'visualpingCredentialsApi',
+		options,
+	);
 	return response;
 }
 
@@ -41,26 +59,30 @@ export async function updateJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 
 	const options: IHttpRequestOptions = {
 		method: 'PUT',
-		url: `https://job.api.visualping.io/v2/jobs/${jobId}`,
+		url: `${apiRoutes.job}/${jobId}`,
 		json: true,
 		headers: {
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
 		body: {
-			organisationId: organisation.id,
-			"notification": {
-				"config": {
-					"n8n": {
-						"url": webhookUrl,
-						"active": true,
-						"notificationType": "webhook"
-					}
-				}
-			}
+			...(organisation?.id && { organisationId: organisation.id }),
+			notification: {
+				config: {
+					n8n: {
+						url: webhookUrl,
+						active: true,
+						notificationType: 'webhook',
+					},
+				},
+			},
 		},
-	}
-	
-	const response = await this.helpers.httpRequestWithAuthentication.call(this, 'visualpingCredentialsApi', options);
+	};
+
+	const response = await this.helpers.httpRequestWithAuthentication.call(
+		this,
+		'visualpingCredentialsApi',
+		options,
+	);
 	return response;
 }
 
@@ -69,26 +91,30 @@ export async function deleteJobWebhookUrl(this: IHookFunctions, webhookUrl: stri
 
 	const options: IHttpRequestOptions = {
 		method: 'PUT',
-		url: `https://job.api.visualping.io/v2/jobs/${jobId}`,
+		url: `${apiRoutes.job}/${jobId}`,
 		json: true,
 		headers: {
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
 		body: {
-			organisationId: organisation.id,
-			"notification": {
-				"config": {
-					"n8n": {
-						"url": webhookUrl,
-						"active": false,
-						"notificationType": "webhook"
-					}
-				}
-			}
+			...(organisation?.id && { organisationId: organisation.id }),
+			notification: {
+				config: {
+					n8n: {
+						url: webhookUrl,
+						active: false,
+						notificationType: 'webhook',
+					},
+				},
+			},
 		},
-	}
+	};
 
-	const response = await this.helpers.httpRequestWithAuthentication.call(this, 'visualpingCredentialsApi', options);
+	const response = await this.helpers.httpRequestWithAuthentication.call(
+		this,
+		'visualpingCredentialsApi',
+		options,
+	);
 	return response;
 }
 
@@ -97,14 +123,22 @@ export async function getJobData(this: IHookFunctions, jobId: number) {
 
 	const options: IHttpRequestOptions = {
 		method: 'GET',
-		url: `https://job.api.visualping.io/v2/jobs/${jobId}?jobId=${jobId}&organisationId=${organisation.id}`,
+		url: `${apiRoutes.job}/${jobId}`,
+		qs: {
+			jobId,
+			...(organisation?.id && { organisationId: organisation.id }),
+		},
 		json: true,
 		headers: {
 			'x-api-client': 'visualping.io-n8n-nodes-visualping',
 		},
-	}
+	};
 
-	const response = await this.helpers.httpRequestWithAuthentication.call(this, 'visualpingCredentialsApi', options);
+	const response = await this.helpers.httpRequestWithAuthentication.call(
+		this,
+		'visualpingCredentialsApi',
+		options,
+	);
 
 	const webhookData = response?.notification?.config?.n8n;
 
@@ -114,25 +148,25 @@ export async function getJobData(this: IHookFunctions, jobId: number) {
 export function getWebhookUrls(webhookUrl: string): { prodUrl: string; testUrl: string } {
 	// Parse the URL to extract components
 	const urlParts = webhookUrl.split('/');
-	
+
 	// Find the workflow ID (it's the UUID after /webhook/ or /webhook-test/)
-	const workflowIdIndex = urlParts.findIndex((part: string) => 
-		part === 'webhook' || part === 'webhook-test'
+	const workflowIdIndex = urlParts.findIndex(
+		(part: string) => part === 'webhook' || part === 'webhook-test',
 	);
-	
+
 	if (workflowIdIndex === -1 || workflowIdIndex + 1 >= urlParts.length) {
 		throw new Error('Invalid webhook URL format');
 	}
-	
+
 	const workflowId = urlParts[workflowIdIndex + 1];
 	const remainingPath = urlParts.slice(workflowIdIndex + 2).join('/');
-	
+
 	// Get the base URL (protocol + host)
 	const baseUrl = urlParts.slice(0, workflowIdIndex).join('/');
-	
+
 	// Construct the URLs
 	const prodUrl = `${baseUrl}/webhook/${workflowId}/${remainingPath}`;
 	const testUrl = `${baseUrl}/webhook-test/${workflowId}/${remainingPath}`;
-	
+
 	return { prodUrl, testUrl };
 }

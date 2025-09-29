@@ -6,8 +6,8 @@ import {
 	IHttpRequestHelper,
 	IAuthenticateGeneric,
 } from 'n8n-workflow';
+import { apiRoutes } from '../nodes/Visualping/GenericFunctions';
 
-export const authApiUrl = 'https://api.visualping.io/v2/token';
 
 export type VisualpingCredentials = {
 	email: string;
@@ -53,7 +53,7 @@ export class VisualpingCredentialsApi implements ICredentialType {
 		// Get the id_token during pre-authentication
 		const authResponse = await this.helpers.httpRequest({
 			method: 'POST',
-			url: authApiUrl,
+			url: apiRoutes.auth,
 			json: true,
 			headers: {
 				'x-api-client': 'visualping.io-n8n-nodes-visualping',
@@ -86,7 +86,7 @@ export class VisualpingCredentialsApi implements ICredentialType {
 
 	test: ICredentialTestRequest = {
 		request: {
-			baseURL: authApiUrl,
+			baseURL: apiRoutes.auth,
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
