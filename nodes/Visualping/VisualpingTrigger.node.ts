@@ -72,7 +72,7 @@ export class VisualpingTrigger implements INodeType {
 			{
 				type: 'notice',
 				name: 'notice',
-				displayName: 'New to Visualping? <a href="https://visualping.io/" target="_blank">Create your account here</a> and explore our <a href="https://docs.visualping.io/n8n/" target="_blank">n8n help guide</a> to get started.',
+				displayName: 'New to Visualping? <a href="https://visualping.io/" target="_blank">Create your account here</a> and explore our <a href="https://help.visualping.io/en/articles/8214849" target="_blank">n8n help guide</a> to get started.',
 				default: 'notice',
 			}
 		],
