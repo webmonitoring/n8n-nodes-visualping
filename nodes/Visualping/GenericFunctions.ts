@@ -124,8 +124,7 @@ export async function getJobData(this: IHookFunctions, jobId: number) {
 	const options: IHttpRequestOptions = {
 		method: 'GET',
 		url: `${apiRoutes.job}/${jobId}`,
-		qs: {
-			jobId,
+		body: {
 			...(organisation?.id && { organisationId: organisation.id }),
 		},
 		json: true,
